@@ -31,6 +31,9 @@ public class MessageQueueComponent implements MessageQueue {
 
     @Override
     public Snapshot snapshot() {
+
+        removeOlderThanFiveMin();
+
         return new Snapshot(
                 messages.subList(0, Math.min(messages.size(), 100))
         );
@@ -38,6 +41,10 @@ public class MessageQueueComponent implements MessageQueue {
 
     @Override
     public long numberOfErrorMessages() {
+
+        removeUnnecessaryMessages();
+        removeOlderThanFiveMin();
+
         return messages.stream()
                 .filter(x -> x.getErrorCode() >= 400)
                 .count();
